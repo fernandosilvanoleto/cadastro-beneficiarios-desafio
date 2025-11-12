@@ -1,11 +1,11 @@
 using AutoMapper;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Services;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Data;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Beneficiario;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Enum;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Models;
+using Desafio_Tecnico.Core.Enum;
+using Desafio_Tecnico.Core.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Desafio_Tecnico.Application.Dto.Beneficiario;
+using Desafio_Tecnico.Infraestructure.Data;
+using Desafio_Tecnico.Application.Services;
 
 
 namespace Desafio.Tests

@@ -1,7 +1,7 @@
-﻿using Desafio_Tecnico_Cadastro_de_Beneficiarios.Enum;
+﻿using Desafio_Tecnico.Core.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Beneficiario
+namespace Desafio_Tecnico.Application.Dto.Beneficiario
 {
     public class BeneficiarioEdicaoDto
     {

@@ -1,11 +1,11 @@
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Services;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Data;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Profiles;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Services.Interface;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Desafio_Tecnico.Application.Profiles;
+using Desafio_Tecnico.Infraestructure.Data;
+using Desafio_Tecnico.Application.Services.Interface;
+using Desafio_Tecnico.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

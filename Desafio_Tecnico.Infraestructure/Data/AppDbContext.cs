@@ -1,11 +1,11 @@
 using Desafio_Tecnico.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Data
+namespace Desafio_Tecnico.Infraestructure.Data
 {
-    public class AppDbContext1 : DbContext
+    public class AppDbContext : DbContext
     {   
-    public AppDbContext1(DbContextOptions<AppDbContext1> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
     public DbSet<PlanoModel> Planos { get; set; }

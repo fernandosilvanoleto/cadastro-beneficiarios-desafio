@@ -1,4 +1,4 @@
-﻿namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Enum
+﻿namespace Desafio_Tecnico.Core.Enum
 {
     public enum Status
     {

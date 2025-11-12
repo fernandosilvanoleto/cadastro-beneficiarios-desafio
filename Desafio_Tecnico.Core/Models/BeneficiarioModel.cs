@@ -1,6 +1,6 @@
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Enum;
+using Desafio_Tecnico.Core.Enum;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Models
+namespace Desafio_Tecnico.Core.Models
 {
     public class BeneficiarioModel
     {
@@ -15,6 +15,7 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Models
         public int PlanoId { get; set; }
 
         public PlanoModel Plano { get; set; }
+        public int MyProperty { get; set; }
     }
 
 }

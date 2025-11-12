@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Desafio_Tecnico.Core\Desafio_Tecnico.Core.csproj" />
+    <ProjectReference Include="..\Desafio_Tecnico.Infraestructure\Desafio_Tecnico.Infraestructure.csproj" />
     <ProjectReference Include="..\Desafio_Tecnico_Cadastro_de_Beneficiarios\Desafio_Tecnico_Cadastro_de_Beneficiarios.csproj" />
   </ItemGroup>
 

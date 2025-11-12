@@ -1,4 +1,4 @@
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Models
+namespace Desafio_Tecnico.Core.Models
 {
     public class ValidacaoModel
     {

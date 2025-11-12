@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Plano
+namespace Desafio_Tecnico.Application.Dto.Plano
 {
     public class PlanoEdicaoDto
     {

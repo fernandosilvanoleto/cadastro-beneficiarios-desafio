@@ -1,11 +1,11 @@
 using AutoMapper;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Data;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Beneficiario;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Models;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Services.Interface;
+using Desafio_Tecnico.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Desafio_Tecnico.Application.Dto.Beneficiario;
+using Desafio_Tecnico.Application.Services.Interface;
+using Desafio_Tecnico.Infraestructure.Data;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Services
+namespace Desafio_Tecnico.Application.Services
 {
     public class BeneficiarioService : IBeneficiarioInterface
     {

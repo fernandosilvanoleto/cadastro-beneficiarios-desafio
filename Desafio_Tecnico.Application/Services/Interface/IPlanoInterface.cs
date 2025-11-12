@@ -1,7 +1,7 @@
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Plano;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Models;
+using Desafio_Tecnico.Core.Models;
+using Desafio_Tecnico.Application.Dto.Plano;
 
-namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Services.Interface
+namespace Desafio_Tecnico.Application.Services.Interface
 {
     public interface IPlanoInterface
     {

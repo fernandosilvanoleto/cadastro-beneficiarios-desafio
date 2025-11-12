@@ -29,4 +29,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Desafio_Tecnico.Application\Desafio_Tecnico.Application.csproj" />
+    <ProjectReference Include="..\Desafio_Tecnico.Core\Desafio_Tecnico.Core.csproj" />
+    <ProjectReference Include="..\Desafio_Tecnico.Infraestructure\Desafio_Tecnico.Infraestructure.csproj" />
+  </ItemGroup>
+
 </Project>

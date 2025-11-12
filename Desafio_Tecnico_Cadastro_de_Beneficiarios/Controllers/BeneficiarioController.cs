@@ -1,5 +1,5 @@
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Dto.Beneficiario;
-using Desafio_Tecnico_Cadastro_de_Beneficiarios.Services.Interface;
+using Desafio_Tecnico.Application.Dto.Beneficiario;
+using Desafio_Tecnico.Application.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
