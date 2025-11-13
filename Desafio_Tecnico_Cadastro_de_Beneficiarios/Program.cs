@@ -10,9 +10,16 @@ using Desafio_Tecnico.Application.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//    options.UseInMemoryDatabase("4tech-db-memory");
+//});
+
+var connectionString = builder.Configuration.GetConnectionString("DesafioTecnicoDb");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseInMemoryDatabase("4tech-db-memory");
+    options.UseSqlServer(connectionString);
 });
 
 builder.Services.AddControllers();
