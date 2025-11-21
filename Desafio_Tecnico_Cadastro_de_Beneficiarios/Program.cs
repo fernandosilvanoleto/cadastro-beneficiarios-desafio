@@ -30,6 +30,7 @@ builder.Services.AddScoped<IPlanoInterface, PlanoService>();
 builder.Services.AddScoped<IBeneficiarioInterface, BeneficiarioService>();
 
 builder.Services.AddAutoMapper(typeof(PlanoProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(BeneficiarioProfile).Assembly);
 
 var app = builder.Build();
 

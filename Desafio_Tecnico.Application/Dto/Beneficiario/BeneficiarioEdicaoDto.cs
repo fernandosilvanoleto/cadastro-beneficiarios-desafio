@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Desafio_Tecnico.Application.Dto.Beneficiario
 {
-    public class BeneficiarioEdicaoDto
+    public class BeneficiarioEdicaoDto : IBeneficiarioBase
     {
         public int Id { get; set; }
         [Required]
@@ -15,6 +15,9 @@ namespace Desafio_Tecnico.Application.Dto.Beneficiario
 
         [Required(ErrorMessage = "A data de nascimento é obrigatória")]
         public DateTime DataNascimento { get; set; }
-        public Status Status { get; set; } 
+        public Status Status { get; set; }
+
+        [Required(ErrorMessage = "O Plano deve ser escolhido.")]
+        public int PlanoId { get; set; }
     }
 }

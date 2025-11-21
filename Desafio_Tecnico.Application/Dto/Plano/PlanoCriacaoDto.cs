@@ -2,7 +2,7 @@
 
 namespace Desafio_Tecnico.Application.Dto.Plano
 {
-    public class PlanoCriacaoDto
+    public class PlanoCriacaoDto : IPlanoBase
     {
         [Required(ErrorMessage = " O  nome do plano é obrigatório")]
         public string Nome { get; set; }

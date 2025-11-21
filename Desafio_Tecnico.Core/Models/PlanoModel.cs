@@ -20,6 +20,8 @@ namespace Desafio_Tecnico.Core.Models
 
         public DateTime DataAtualizacao { get; set; }
 
+        public bool Is_deleted { get; set; } = false;
+
 
         public ICollection<BeneficiarioModel> Beneficiarios { get; set; }
         

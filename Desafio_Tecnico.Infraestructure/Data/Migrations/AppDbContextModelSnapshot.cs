@@ -44,6 +44,9 @@ namespace Desafio_Tecnico.Infraestructure.Data.Migrations
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("date");
 
+                    b.Property<bool>("Is_deleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -81,6 +84,9 @@ namespace Desafio_Tecnico.Infraestructure.Data.Migrations
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Is_deleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Nome")
                         .IsRequired()

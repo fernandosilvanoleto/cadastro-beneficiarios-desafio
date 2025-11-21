@@ -23,8 +23,9 @@ namespace Desafio_Tecnico.Core.Models
         
         public Status Status { get; set; } = Status.ATIVO;        
 
-        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
-        public DateTime DataAtualizacao { get; set; }        
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
+        public DateTime DataAtualizacao { get; set; }
+        public bool Is_deleted { get; set; } = false;
 
     }
 

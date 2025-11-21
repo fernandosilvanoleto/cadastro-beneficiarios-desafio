@@ -2,7 +2,7 @@
 
 namespace Desafio_Tecnico.Application.Dto.Plano
 {
-    public class PlanoEdicaoDto
+    public class PlanoEdicaoDto : IPlanoBase
     {
         public int Id { get; set; }
 
