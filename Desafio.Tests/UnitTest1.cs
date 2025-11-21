@@ -1,11 +1,14 @@
 using AutoMapper;
+using Desafio_Tecnico.Application.Dto.Beneficiario;
+using Desafio_Tecnico.Application.Services;
 using Desafio_Tecnico.Core.Enum;
 using Desafio_Tecnico.Core.Models;
+using Desafio_Tecnico.Infraestructure.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Desafio_Tecnico.Application.Dto.Beneficiario;
-using Desafio_Tecnico.Infraestructure.Data;
-using Desafio_Tecnico.Application.Services;
+using Microsoft.IdentityModel.Tokens;
+using Sprache;
+using System;
 
 
 namespace Desafio.Tests
@@ -81,6 +84,21 @@ namespace Desafio.Tests
             return CriarService();
         }
 
+        private async Task<BeneficiarioService> NovoBeneficiarioComCPFInvalido()
+        {
+            _context.Beneficiarios.Add(new BeneficiarioModel
+            {
+                NomeCompleto = "Fernando Silva Noleto",
+                Cpf = "055556721",
+                PlanoId = 1,
+                DataNascimento = new DateTime(09 / 06 / 1995),
+                Status = Status.ATIVO
+            });
+            await _context.SaveChangesAsync();
+
+            return CriarService();
+        }
+
         [Fact]
         public async Task AtualizarStatus_Beneficiario_DeveAlterarParaInativo()
         {
@@ -98,6 +116,7 @@ namespace Desafio.Tests
 
             var result = await service.EditarBeneficiarios(dtoEdicao);
             result.Status.Should().BeTrue();
+            result.Mensagem.Should().Be("Beneficiário editado com sucesso");
             result.Dados.Status.Should().Be(Status.INATIVO);
         }
 
@@ -106,9 +125,124 @@ namespace Desafio.Tests
         {
             var service = await CriarServiceComListaDeBeneficiarios();
 
-            var todos = (await service.ListarBeneficiarios()).Dados;
+            var todos = (await service.ListarBeneficiariosAtivos()).Dados;
             var filtrados = todos.Where(b => b.Status == Status.ATIVO && b.PlanoId == 1).ToList();
+
+
             filtrados.Should().OnlyContain(b => b.Status == Status.ATIVO && b.PlanoId == 1);
+
+            var result = await service.ListarBeneficiariosAtivos();
+
+            result.Status.Should().BeTrue();
+            result.Dados.Should().NotBeNull();                  
+            result.Dados.Should().HaveCount(2);                
+            result.Dados.Should().OnlyContain(b => b.Status == Status.ATIVO); // só ATIVO
+        }
+
+        [Fact]
+        public async Task CriarBeneficiario_ComCPFExistente_BancoDados()
+        {
+
+           // Arrange
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "BeneficiarioTesteCPFExiste")
+                .Options;
+
+            string cpfExistente = "05555672144";
+
+            using (var context = new AppDbContext(options))
+            {
+                // cria um beneficiário existente no banco
+                context.Beneficiarios.Add(new BeneficiarioModel
+                {
+                    NomeCompleto = "João da Silva",
+                    Cpf = cpfExistente,
+                    DataNascimento = new DateTime(1990, 01, 10),
+                    PlanoId = 1
+                });
+
+                context.SaveChanges();
+            }
+
+            ResponseModel<BeneficiarioModel> resultado;
+
+            // Act
+            using (var context = new AppDbContext(options))
+            {
+                var service = new BeneficiarioService(context, _mapper);
+
+                var dto = new BeneficiarioCriacaoDto
+                {
+                    NomeCompleto = "Fernando Silva Noleto",
+                    Cpf = cpfExistente, // CPF duplicado
+                    DataNascimento = new DateTime(1995, 06, 09),
+                    PlanoId = 1
+                };
+
+                resultado = await service.CriarBeneficiario(dto);
+            }
+
+            // Assert
+            Assert.Equal("Beneficiário com mesmo CPF já criado anteriormente", resultado.Mensagem);
+            Assert.Null(resultado.Dados);
+
+        }
+
+        [Fact]
+        public async Task ValidarCPFAoCriarBeneficiario_BancoDados()
+        {
+            // ARRANGE
+            var service = CriarService();
+
+            var dtoCriacao = new BeneficiarioCriacaoDto
+            {
+                NomeCompleto = "Novo Usuário",
+                Cpf = "055556721",                     // CPF INVÁLIDO
+                DataNascimento = new DateTime(1990, 01, 01),
+                PlanoId = 1
+            };
+
+            // ACT
+            var result = await service.CriarBeneficiario(dtoCriacao);
+
+            // ASSERT
+            result.Status.Should().BeFalse();
+            result.Mensagem.Should().Be("CPF de Novo Beneficiário Inválido.");
+            result.Dados.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task VinculacaoPlanoInexistente_Cadastro()
+        {
+            // ARRANGE
+
+            _context.Planos.AddRange(new List<PlanoModel>
+            {
+                new PlanoModel { Id = 1, Nome = "Plano Bronze", Codigo_registro_ans = "ANS001", Status = Status.ATIVO },
+                new PlanoModel { Id = 2, Nome = "Plano Prata",  Codigo_registro_ans = "ANS002", Status = Status.ATIVO },
+                new PlanoModel { Id = 3, Nome = "Plano Ouro",   Codigo_registro_ans = "ANS003", Status = Status.ATIVO }
+            });
+
+            await _context.SaveChangesAsync();
+
+            var service = new BeneficiarioService(_context, _mapper);
+
+            var dtoCriacao = new BeneficiarioCriacaoDto
+            {
+                NomeCompleto = "Novo Usuário",
+                Cpf = "05555672144",                     // CPF INVÁLIDO
+                DataNascimento = new DateTime(1990, 01, 01),
+                PlanoId = 10
+            };
+
+            // ACT
+            var result = await service.CriarBeneficiario(dtoCriacao);
+
+            // ASSERT
+            result.Status.Should().BeFalse();
+            result.Mensagem.Should().Be("Status 404 - Plano inexistente. Por favor, revise os dados novamente.");
+            result.Error.Should().Be("ValidationPlanoError");
+            result.Dados.Should().BeNull();
         }
     }
 }

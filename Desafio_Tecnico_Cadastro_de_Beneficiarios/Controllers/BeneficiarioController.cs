@@ -34,6 +34,22 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Controllers
         }
 
         /// <summary>
+        /// Lista todos os beneficiários ativos
+        /// </summary>
+        [HttpGet("ativos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ListarBeneficiariosAtivos()
+        {
+            var beneficiario = await _beneficiarioInterface.ListarBeneficiariosAtivos();
+
+            if (!beneficiario.Status)
+                return StatusCode(StatusCodes.Status500InternalServerError, beneficiario);
+
+            return Ok(beneficiario);
+        }
+
+        /// <summary>
         /// Retorna um beneficiário pelo ID
         /// </summary>
         [HttpGet("{id}")]

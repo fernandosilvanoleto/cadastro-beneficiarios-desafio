@@ -7,6 +7,7 @@ namespace Desafio_Tecnico.Application.Services.Interface
     public interface IBeneficiarioInterface
     {
         Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiarios();
+        Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiariosAtivos();
         Task<ResponseModel<BeneficiarioModel>> BuscarBeneficiariosPorId(int id);
         Task<ResponseModel<BeneficiarioModel>> CriarBeneficiario(BeneficiarioCriacaoDto planoCriacaoDto);
         Task<ResponseModel<BeneficiarioModel>> EditarBeneficiarios(BeneficiarioEdicaoDto beneficiarioEdicaoDto);

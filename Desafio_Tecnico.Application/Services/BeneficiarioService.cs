@@ -2,6 +2,7 @@ using AutoMapper;
 using Desafio_Tecnico.Application.Dto.Beneficiario;
 using Desafio_Tecnico.Application.Dto.Plano;
 using Desafio_Tecnico.Application.Services.Interface;
+using Desafio_Tecnico.Core.Enum;
 using Desafio_Tecnico.Core.Models;
 using Desafio_Tecnico.Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -92,6 +93,13 @@ namespace Desafio_Tecnico.Application.Services
             {
                 beneficiarioCriacaoDto.Cpf = LimparCPF(beneficiarioCriacaoDto.Cpf);
 
+                if (!VerificarValidarCPF(beneficiarioCriacaoDto.Cpf))
+                {
+                    response = MensagemErroPadrao(response, "ValidationError", "CPF de Novo Beneficiário Inválido.");
+
+                    return response;
+                }
+
                 if (BeneficiarioExiste(beneficiarioCriacaoDto))
                 {
                     response = MensagemErroPadrao(response, "ValidationError", "Beneficiário com mesmo CPF já criado anteriormente");
@@ -101,7 +109,7 @@ namespace Desafio_Tecnico.Application.Services
 
                 if (!PlanoExisteBanco(beneficiarioCriacaoDto.PlanoId))
                 {
-                    response = MensagemErroPadrao(response, "ValidationPlanoError", "Plano inexistente. Por favor, revise os dados novamente.");
+                    response = MensagemErroPadrao(response, "ValidationPlanoError", "Status 404 - Plano inexistente. Por favor, revise os dados novamente.");
 
                     return response;
                 }
@@ -262,6 +270,16 @@ namespace Desafio_Tecnico.Application.Services
             return Regex.Replace(cpfOriginal, "[^0-9]", "");
         }
 
+        public bool VerificarValidarCPF(string cpfLimpo)
+        {
+            if (string.IsNullOrWhiteSpace(cpfLimpo))
+                return false;
+
+            var regex = new Regex(@"(^\d{3}\.\d{3}\.\d{3}-\d{2}$)|(^\d{11}$)");  // só aceita CPF formatado (000.000.000-00) ou só números (00000000000)
+
+            return regex.IsMatch(cpfLimpo); // retorna true se o CPF combinar com o padrão
+        } 
+
         public ResponseModel<BeneficiarioModel> MensagemErroPadrao(ResponseModel<BeneficiarioModel> response, string mensagemError, string mensagem)
         {
             response.Status = false;
@@ -274,6 +292,42 @@ namespace Desafio_Tecnico.Application.Services
             });
 
             return response;
+        }
+
+        public async Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiariosAtivos()
+        {
+            ResponseModel<List<BeneficiarioModel>> response = new ResponseModel<List<BeneficiarioModel>>();
+
+            try
+            {
+                var beneficiarios = await _context.Beneficiarios.Where(b => b.Status == Status.ATIVO).ToListAsync();
+
+                if (beneficiarios == null)
+                {
+                    response.Status = false;
+                    response.Error = "ValidationError";
+                    response.Mensagem = "Beneficiarios não localizados";
+                    response.Details.Add(new ValidacaoModel
+                    {
+                        Field = "id",
+                        Rule = "not_found"
+                    });
+
+                    return response;
+                }
+
+                response.Dados = beneficiarios;
+                response.Mensagem = "Beneficiários ativos listados com sucesso";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Error = "ServerError";
+                response.Mensagem = ex.Message;
+                return response;
+            }
         }
     }
 }
