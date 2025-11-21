@@ -172,11 +172,27 @@ namespace Desafio_Tecnico.Application.Services
 
             try
             {
+                beneficiarioEdicaoDto.Cpf = LimparCPF(beneficiarioEdicaoDto.Cpf);
+
+                if (!VerificarValidarCPF(beneficiarioEdicaoDto.Cpf))
+                {
+                    response = MensagemErroPadrao(response, "ValidationError", "CPF de Novo Beneficiário Inválido.");
+
+                    return response;
+                }
+
+                if (!PlanoExisteBanco(beneficiarioEdicaoDto.PlanoId))
+                {
+                    response = MensagemErroPadrao(response, "ValidationPlanoError", "Status 404 - Plano inexistente. Por favor, revise os dados novamente.");
+
+                    return response;
+                }
+
                 var beneficiarioBanco = await _context.Beneficiarios.FindAsync(beneficiarioEdicaoDto.Id);
 
                 if (beneficiarioBanco == null)
                 {
-                    response = MensagemErroPadrao(response, "ValidationError", "CPF inválido.");
+                    response = MensagemErroPadrao(response, "ValidationError", "Dados de Beneficiário incorretos.");
 
                     response.Details.Add(new ValidacaoModel
                     {
@@ -189,7 +205,7 @@ namespace Desafio_Tecnico.Application.Services
 
                 if (beneficiarioEdicaoDto.Cpf.Trim().ToLower() != beneficiarioBanco.Cpf.Trim().ToLower() && BeneficiarioExiste(beneficiarioEdicaoDto))
                 {
-                    response = MensagemErroPadrao(response, "ValidationError", "Beneficiário já criado anteriormente com esse mesmo CPF. Por favor, revise o seu CPF.");
+                    response = MensagemErroPadrao(response, "ValidationError", "Já existe um Beneficiário criado na banco de dados com esse mesmo CPF. Por favor, revise o seu CPF.");
 
                     return response;
                 }
@@ -213,13 +229,21 @@ namespace Desafio_Tecnico.Application.Services
             }
         }
 
-        public async Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiarios()
+        public async Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiarios(bool isBeneficiariosActive)
         {
             ResponseModel<List<BeneficiarioModel>> response = new ResponseModel<List<BeneficiarioModel>>();
 
             try
             {
-                var beneficiarios = await _context.Beneficiarios.ToListAsync();
+                var beneficiariosQuery = _context.Beneficiarios.AsQueryable();
+
+                if (isBeneficiariosActive)
+                {
+                    beneficiariosQuery = beneficiariosQuery
+                        .Where(b => b.Status == Status.ATIVO && b.Is_deleted == false);
+                }
+
+                var beneficiarios = await beneficiariosQuery.ToListAsync();
 
                 if (beneficiarios == null)
                 {
@@ -236,7 +260,9 @@ namespace Desafio_Tecnico.Application.Services
                 }
 
                 response.Dados = beneficiarios;
-                response.Mensagem = "Beneficiários listados com sucesso";
+                response.Mensagem = isBeneficiariosActive
+                        ? "Beneficiários ativos listados com sucesso"
+                        : "Todos os beneficiários listados com sucesso";
                 return response;
 
             }
@@ -293,41 +319,6 @@ namespace Desafio_Tecnico.Application.Services
 
             return response;
         }
-
-        public async Task<ResponseModel<List<BeneficiarioModel>>> ListarBeneficiariosAtivos()
-        {
-            ResponseModel<List<BeneficiarioModel>> response = new ResponseModel<List<BeneficiarioModel>>();
-
-            try
-            {
-                var beneficiarios = await _context.Beneficiarios.Where(b => b.Status == Status.ATIVO).ToListAsync();
-
-                if (beneficiarios == null)
-                {
-                    response.Status = false;
-                    response.Error = "ValidationError";
-                    response.Mensagem = "Beneficiarios não localizados";
-                    response.Details.Add(new ValidacaoModel
-                    {
-                        Field = "id",
-                        Rule = "not_found"
-                    });
-
-                    return response;
-                }
-
-                response.Dados = beneficiarios;
-                response.Mensagem = "Beneficiários ativos listados com sucesso";
-                return response;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Error = "ServerError";
-                response.Mensagem = ex.Message;
-                return response;
-            }
-        }
+        
     }
 }

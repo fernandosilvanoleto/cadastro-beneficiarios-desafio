@@ -25,7 +25,8 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarBeneficiarios()
         {
-            var beneficiario = await _beneficiarioInterface.ListarBeneficiarios();
+            bool retornarSomenteBeneficiariosAtivos = false;
+            var beneficiario = await _beneficiarioInterface.ListarBeneficiarios(retornarSomenteBeneficiariosAtivos);
 
             if (!beneficiario.Status)
                 return StatusCode(StatusCodes.Status500InternalServerError, beneficiario);
@@ -41,7 +42,8 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarBeneficiariosAtivos()
         {
-            var beneficiario = await _beneficiarioInterface.ListarBeneficiariosAtivos();
+            bool retornarSomenteBeneficiariosAtivos = true;
+            var beneficiario = await _beneficiarioInterface.ListarBeneficiarios(retornarSomenteBeneficiariosAtivos);
 
             if (!beneficiario.Status)
                 return StatusCode(StatusCodes.Status500InternalServerError, beneficiario);
@@ -149,7 +151,7 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Controllers
         /// <summary>
         /// Ativar um beneficiário pelo ID
         /// </summary>
-        [HttpDelete("AtivarBeneficiario/{id}")]
+        [HttpPut("AtivarBeneficiario/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

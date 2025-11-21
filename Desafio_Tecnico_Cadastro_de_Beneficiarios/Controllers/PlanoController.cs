@@ -20,12 +20,30 @@ namespace Desafio_Tecnico_Cadastro_de_Beneficiarios.Controllers
         /// <summary>
         /// Lista todos os beneficiários
         /// </summary>
-        [HttpGet("Todos")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarPlanos()
         {
-            var planos = await _planoInterface.ListarPlanos();
+            bool listarSomentePlanosAtivos = false;
+            var planos = await _planoInterface.ListarPlanos(listarSomentePlanosAtivos);
+
+            if (!planos.Status)
+                return StatusCode(StatusCodes.Status500InternalServerError, planos);
+
+            return Ok(planos);
+        }
+
+        /// <summary>
+        /// Lista todos os beneficiários
+        /// </summary>
+        [HttpGet("ativos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ListarPlanosAtivos()
+        {
+            bool listarSomentePlanosAtivos = true;
+            var planos = await _planoInterface.ListarPlanos(listarSomentePlanosAtivos);
 
             if (!planos.Status)
                 return StatusCode(StatusCodes.Status500InternalServerError, planos);

@@ -120,18 +120,20 @@ namespace Desafio.Tests
             result.Dados.Status.Should().Be(Status.INATIVO);
         }
 
+
         [Fact]
         public async Task ListarBeneficiarios_ComFiltros_DeveRetornarSomenteCorretos()
         {
             var service = await CriarServiceComListaDeBeneficiarios();
+            bool retornarSomenteBeneficiariosAtivos = true;
 
-            var todos = (await service.ListarBeneficiariosAtivos()).Dados;
+            var todos = (await service.ListarBeneficiarios(retornarSomenteBeneficiariosAtivos)).Dados;
             var filtrados = todos.Where(b => b.Status == Status.ATIVO && b.PlanoId == 1).ToList();
 
 
             filtrados.Should().OnlyContain(b => b.Status == Status.ATIVO && b.PlanoId == 1);
 
-            var result = await service.ListarBeneficiariosAtivos();
+            var result = await service.ListarBeneficiarios(retornarSomenteBeneficiariosAtivos);
 
             result.Status.Should().BeTrue();
             result.Dados.Should().NotBeNull();                  
@@ -243,6 +245,22 @@ namespace Desafio.Tests
             result.Mensagem.Should().Be("Status 404 - Plano inexistente. Por favor, revise os dados novamente.");
             result.Error.Should().Be("ValidationPlanoError");
             result.Dados.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task BuscarBeneficiario_Inexistente()
+        {
+            // ARRANGE
+            var service = await CriarServiceComListaDeBeneficiarios();
+            int idBeneficiario = 5;
+
+            // ACT
+            var result = await service.BuscarBeneficiariosPorId(idBeneficiario);
+
+            // ASSERT
+            result.Status.Should().BeFalse();
+            result.Mensagem.Should().Be("Beneficiario não localizado");
+            result.Error.Should().Be("ValidationError");
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Desafio_Tecnico.Application.Dto.Plano;
 using Desafio_Tecnico.Application.Services.Interface;
 using Desafio_Tecnico.Infraestructure.Data;
+using Desafio_Tecnico.Core.Enum;
 
 namespace Desafio_Tecnico.Application.Services
 {
@@ -187,7 +188,6 @@ namespace Desafio_Tecnico.Application.Services
                 await _context.SaveChangesAsync();
 
                 var planoAtualizado = await _context.Planos.Include(p => p.Beneficiarios).FirstOrDefaultAsync(p => p.Id == PlanoBanco.Id);
-                response.Dados = planoAtualizado;
                 response.Mensagem = "Plano editado com sucesso";
                 return response;
 
@@ -236,13 +236,21 @@ namespace Desafio_Tecnico.Application.Services
             }
         }
 
-        public async Task<ResponseModel<List<PlanoModel>>> ListarPlanos()
+        public async Task<ResponseModel<List<PlanoModel>>> ListarPlanos(bool planosAtivos)
         {
             ResponseModel<List<PlanoModel>> response = new ResponseModel<List<PlanoModel>>();
 
             try
             {
-                var planos = await _context.Planos.Where(p => p.Is_deleted == false).ToListAsync();
+                var planosQuery = _context.Planos.AsQueryable();
+
+                if (planosAtivos)
+                {
+                    planosQuery = planosQuery
+                        .Where(p => p.Status == Status.ATIVO && p.Is_deleted == false );
+                }
+
+                var planos = await planosQuery.ToListAsync();
 
                 response.Dados = planos;
                 response.Mensagem = "Beneficiários listados com sucesso";
@@ -260,11 +268,9 @@ namespace Desafio_Tecnico.Application.Services
         public bool PlanoExiste(IPlanoBase planoBase)
         {
             string nome = planoBase.Nome.Trim().ToLower();
-            string codigo_Registro = planoBase.Codigo_registro_ans.Trim().ToLower();
 
             // converter valores para minúsculos e remover os espaços da direita e esquerda -- 15/11/2025
-            return _context.Planos.Any(item => (item.Nome.ToLower().Trim() == nome
-                    || item.Codigo_registro_ans.ToLower().Trim() == codigo_Registro));
+            return _context.Planos.Any(item => (item.Nome.ToLower().Trim() == nome));
         }
     }
 }

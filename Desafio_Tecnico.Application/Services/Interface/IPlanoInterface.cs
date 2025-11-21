@@ -5,7 +5,7 @@ namespace Desafio_Tecnico.Application.Services.Interface
 {
     public interface IPlanoInterface
     {
-        Task<ResponseModel<List<PlanoModel>>> ListarPlanos();
+        Task<ResponseModel<List<PlanoModel>>> ListarPlanos(bool planosAtivos);
         Task<ResponseModel<PlanoModel>> ListarPlanoIndividual(int planoId);
         Task<ResponseModel<PlanoModel>> CriarPlano(PlanoCriacaoDto planoCriacaoDto);
         Task<ResponseModel<PlanoModel>> EditarPlano(PlanoEdicaoDto planoEdicaoDto);
